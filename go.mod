@@ -1,6 +1,6 @@
 module github.com/skysoft-atm/udp-mesh
 
-go 1.13
+go 1.14
 
 require (
 	github.com/skysoft-atm/consul-util v0.0.18
