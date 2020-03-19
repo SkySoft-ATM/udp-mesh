@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/skysoft-atm/consul-util/consul"
 	"github.com/skysoft-atm/gorillaz"
+	"github.com/skysoft-atm/supercaster/broadcast"
 	"github.com/skysoft-atm/supercaster/multicast"
 	"github.com/skysoft-atm/supercaster/network"
+	"net"
 	"strings"
 )
 
@@ -25,7 +27,8 @@ func main() {
 
 	multicastStream := g.Viper.GetString("multicastStream")
 	broadcastStream := g.Viper.GetString("broadcastStream")
-	udpToStream := g.Viper.GetString("udpToStream")
+	broadcastToStream := g.Viper.GetString("broadcastToStream")
+	multicastToStream := g.Viper.GetString("multicastToStream")
 	interfaceName := g.Viper.GetString(network.ConfigNetworkInterface)
 
 	netInterface := network.GetNetworkInterface(interfaceName)
@@ -44,20 +47,22 @@ func main() {
 		gorillaz.Log.Info("No UDP broadcast configured")
 	}
 
-	if udpToStream != "" {
-		for _, udpSub := range strings.Split(udpToStream, "|") {
-			p := strings.Split(udpSub, ">")
-			if len(p) != 2 {
-				panic("Error parsing udp subscription " + udpSub)
-			}
-			addr := p[0]
-			stream := p[1]
+	if broadcastToStream != "" {
+		for _, udpSub := range strings.Split(broadcastToStream, "|") {
+			addr, stream, source := parseSubscription(udpSub, netInterface, maxDatagramSize)
+			gorillaz.Sugar.Infof("Publishing %s to %s", addr, stream)
+			go panicIf(func() error {
+				err := broadcast.UdpToStream(g, source, stream)
+				return fmt.Errorf("error publishing %s to %s : %w", addr, stream, err)
+			})
+		}
+	} else {
+		gorillaz.Log.Info("No broadcast to stream configured")
+	}
 
-			source := network.UdpSource{
-				NetInterface:    netInterface,
-				HostPort:        addr,
-				MaxDatagramSize: maxDatagramSize,
-			}
+	if multicastToStream != "" {
+		for _, udpSub := range strings.Split(multicastToStream, "|") {
+			addr, stream, source := parseSubscription(udpSub, netInterface, maxDatagramSize)
 			gorillaz.Sugar.Infof("Publishing %s to %s", addr, stream)
 			go panicIf(func() error {
 				err := multicast.UdpToStream(g, source, stream)
@@ -65,11 +70,27 @@ func main() {
 			})
 		}
 	} else {
-		gorillaz.Log.Info("No UDP to stream configured")
+		gorillaz.Log.Info("No broadcast to stream configured")
 	}
 
 	g.SetReady(true)
 	select {}
+}
+
+func parseSubscription(udpSub string, netInterface *net.Interface, maxDatagramSize int) (string, string, network.UdpSource) {
+	p := strings.Split(udpSub, ">")
+	if len(p) != 2 {
+		panic("Error parsing udp subscription " + udpSub)
+	}
+	addr := p[0]
+	stream := p[1]
+
+	source := network.UdpSource{
+		NetInterface:    netInterface,
+		HostPort:        addr,
+		MaxDatagramSize: maxDatagramSize,
+	}
+	return addr, stream, source
 }
 
 func createPublication(streamDef string, interfaceName string, g *gorillaz.Gaz, pubType network.UdpPubType) {
