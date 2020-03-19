@@ -53,7 +53,7 @@ func main() {
 			gorillaz.Sugar.Infof("Publishing %s to %s", addr, stream)
 			go panicIf(func() error {
 				err := broadcast.UdpToStream(g, source, stream)
-				return fmt.Errorf("error publishing %s to %s : %w", addr, stream, err)
+				return fmt.Errorf("error publishing %s to stream %s : %w", addr, stream, err)
 			})
 		}
 	} else {
@@ -63,14 +63,14 @@ func main() {
 	if multicastToStream != "" {
 		for _, udpSub := range strings.Split(multicastToStream, "|") {
 			addr, stream, source := parseSubscription(udpSub, netInterface, maxDatagramSize)
-			gorillaz.Sugar.Infof("Publishing %s to %s", addr, stream)
+			gorillaz.Sugar.Infof("Publishing %s to stream %s", addr, stream)
 			go panicIf(func() error {
 				err := multicast.UdpToStream(g, source, stream)
 				return fmt.Errorf("error publishing %s to %s : %w", addr, stream, err)
 			})
 		}
 	} else {
-		gorillaz.Log.Info("No broadcast to stream configured")
+		gorillaz.Log.Info("No multicast to stream configured")
 	}
 
 	g.SetReady(true)

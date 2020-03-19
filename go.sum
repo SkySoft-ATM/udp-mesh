@@ -216,8 +216,8 @@ github.com/skysoft-atm/consul-util v0.0.18/go.mod h1:kogVmjG3X3nb/wV+JQsyaAu+c8Q
 github.com/skysoft-atm/gorillaz v0.6.21/go.mod h1:yS5ITg8xoQMBxTLI63RbdKKEiKFHJZtKnsU8YIF21Co=
 github.com/skysoft-atm/gorillaz v0.7.5 h1:aVjr7HI752xQRBe4y7OyfAZoyqKDUouF+FLQWdTdf2E=
 github.com/skysoft-atm/gorillaz v0.7.5/go.mod h1:FDx6bwI5q2LdXybCTiaIzdFOh2KcrxvKJ6mwO3SN/nM=
-github.com/skysoft-atm/supercaster v0.0.11 h1:KuGbeMp9sfm1Nob9o44K+LCyz+20d25PpJTUeBgxiMw=
-github.com/skysoft-atm/supercaster v0.0.11/go.mod h1:qFOqCXKyeV7azsUfJi6k3ihkEEJmsCrh9cFCnIDYyo0=
+github.com/skysoft-atm/supercaster v0.0.12 h1:/f9UIlW6yLMuJT05BZFpn6hqTN0tpNEiBg5QAaYL2iw=
+github.com/skysoft-atm/supercaster v0.0.12/go.mod h1:qFOqCXKyeV7azsUfJi6k3ihkEEJmsCrh9cFCnIDYyo0=
 github.com/skysoft-atm/zipkin-go-light-opentracing v0.0.1 h1:zfDhWH75TUjV6qOEBkslsS9A0JHBtu3N7mGQXZiB7WA=
 github.com/skysoft-atm/zipkin-go-light-opentracing v0.0.1/go.mod h1:VRTFlaRkZ80ISLu0RaGCEkuqCJcvPY/qDg8wH+Zi1i0=
 github.com/soheilhy/cmux v0.1.4 h1:0HKaf1o97UwFjHH9o5XsHUOF+tqmdA7KEzXLpiyaw0E=

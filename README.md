@@ -7,3 +7,6 @@ https://css.bz/2016/12/08/go-raw-sockets.html
 
 On windows, the pcap lib needs to be installed:
 https://nmap.org/npcap/windows-10.html
+
+On Linux:
+sudo apt-get install libpcap-dev
