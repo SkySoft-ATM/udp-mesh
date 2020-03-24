@@ -22,7 +22,7 @@ func init() {
 // go build -o mesh && sudo setcap cap_net_raw=ep ./mesh && ./mesh --network.interface=wlp59s0
 
 func main() {
-	g := gorillaz.New(consul.ActivateServiceDiscovery(), consul.ActivateViperRemoteConfig())
+	g := gorillaz.New(consul.ActivateServiceDiscovery(), consul.ActivateViperRemoteConfigRetryOnError())
 	g.Run()
 
 	multicastStream := g.Viper.GetString("multicastStream")
