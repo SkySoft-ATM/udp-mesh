@@ -19,7 +19,7 @@ func init() {
 	flag.Int(configMaxDatagramSize, 8192, "Max datagram size.")
 }
 
-// go build -o mesh && sudo setcap cap_net_raw=ep ./mesh && ./mesh --network.interface=wlp59s0
+// go build -o mesh ./main && sudo setcap cap_net_raw=ep ./mesh && ./mesh --network.interface=wlp59s0
 
 func main() {
 	g := gorillaz.New(consul.ActivateServiceDiscovery(), consul.ActivateViperRemoteConfigRetryOnError())
@@ -96,11 +96,18 @@ func parseSubscription(udpSub string, netInterface *net.Interface, maxDatagramSi
 func createPublication(streamDef string, interfaceName string, g *gorillaz.Gaz, pubType network.UdpPubType) {
 	for _, udpPub := range strings.Split(streamDef, "|") {
 		p := strings.Split(udpPub, ">")
-		if len(p) != 2 {
+		serviceStream := ""
+		hostPort := ""
+		if len(p) == 1 {
+			gorillaz.Sugar.Infof("Publishing stream %s on its original IP and port", udpPub)
+			serviceStream = p[0]
+		} else if len(p) == 2 {
+			serviceStream = p[0]
+			hostPort = p[1]
+		} else {
 			panic("Error parsing udp publication " + udpPub)
 		}
-		serviceStream := p[0]
-		hostPort := p[1]
+
 		ss := strings.Split(serviceStream, "/")
 		if len(ss) != 2 {
 			panic("Error parsing service stream " + serviceStream)
