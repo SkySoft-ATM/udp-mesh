@@ -32,7 +32,7 @@ service name: trackgen
 }
 ```
 
-server01
+service name: server01
 ```
 {
     "broadcastStream": "trackgen/tracks|trackgen/status",
@@ -40,7 +40,7 @@ server01
 }
 ```
 
-visu01
+service name: visu01
 ```
 {
     "multicastStream": "server01/setup|server01/distrib",
