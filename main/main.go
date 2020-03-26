@@ -28,6 +28,7 @@ func main() {
 	multicastStream := g.Viper.GetString("multicastStream")
 	broadcastStream := g.Viper.GetString("broadcastStream")
 	broadcastToStream := g.Viper.GetString("broadcastToStream")
+	streamToUnicast := g.Viper.GetString("streamToUnicast")
 	multicastToStream := g.Viper.GetString("multicastToStream")
 	interfaceName := g.Viper.GetString(network.ConfigNetworkInterface)
 
@@ -71,6 +72,31 @@ func main() {
 		}
 	} else {
 		gorillaz.Log.Info("No multicast to stream configured")
+	}
+
+	if streamToUnicast != "" {
+		for _, pub := range strings.Split(streamToUnicast, "|") {
+			p := strings.Split(pub, ">")
+			if len(p) != 2 {
+				panic("Error parsing udp publication " + pub)
+			}
+
+			go panicIf(func() error {
+				ss := strings.Split(p[0], "/")
+				if len(ss) != 2 {
+					panic("Error parsing service stream " + p[0])
+				}
+				stream, err := g.DiscoverAndConsumeServiceStream(ss[0], ss[1])
+				if err != nil {
+					panic(err)
+				}
+				gorillaz.Sugar.Infof("Publishing stream %s to unicast destination %s", p[0], p[1])
+				err = network.StreamToUdp(stream, p[1])
+				return fmt.Errorf("error publishing unicast %s to %s : %w", p[0], p[1], err)
+			})
+		}
+	} else {
+		gorillaz.Log.Info("No stream to unicast  configured")
 	}
 
 	g.SetReady(true)
